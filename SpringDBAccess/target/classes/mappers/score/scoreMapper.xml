@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> <!-- 공식문서에 있는거임. 그냥 붙여넣어 -->
+    
+
+<!-- namespace에는 구현하고자 하는 인터페이스의 풀 경로를 작성. -->
+<mapper namespace="com.spring.db.repository.IScoreMapper">
+
+	<!--  DB컬럼명과 VO의 필드명을 맞추는 ResultMap 선언 -->
+	<resultMap type="com.spring.db.model.ScoreVO" id="scoreMap"> <!-- 포장하고자하는 객체 타입을 type에쓰자, id는 마음대로 지어도 됨 -->
+		
+		<!--맵핑은 id태그는 PRIMARY KEY. 나머지는 result로 맵핑. -->
+		<id property="stuId" column="stu_id" /> <!-- 프로퍼티는 세터메서드며, stuId라는 세터메서드를 불러서 column값 stu_id를 넣는거야 -->
+		<result property="stuName" column="stu_name" />
+	</resultMap>
+
+
+	<!-- 점수 등록 기능부터 구현해보자 -->
+	<!-- sql은 인서트쓸꺼니  -->
+	<insert id="insertScore"> <!-- id에는 추상메서드 이름쓰자 -->
+		INSERT INTO scores(stu_name, kor, eng, math, total, average)
+		VALUES(#{stuName}, #{kor}, #{eng}, #{math}, #{total}, #{average}) <!-- vo에서 꺼내려는 객체 명들을 써주면 됨. 즉, vo.getStuName()이 아니라 마치 EL에서 값을 꺼내는 것처럼 쓰면 됨. -->
+	</insert>
+	
+	
+	
+	<!-- 점수를 전체 조회 기능 -->
+	<select id="selectAllScores" resultMap="scoreMap"> <!-- 셀렉트는 리턴이 있으니,  위에서 적은거 참고해서 포장해~ 라는 얘기다. -->
+		SELECT * FROM scores ORDER BY stu_id ASC 
+	</select>
+	
+	
+	<!-- 점수 삭제 기능 -->
+	<delete id="deleteScore">
+		DELETE FROM scores WHERE stu_id = #{num} <!-- deleteScore라는 메서드가 매개값으로 무엇을 받는지 확인하면됨. 그걸 #{}에넣자 -->
+	</delete>	
+	
+	
+	<!-- 점수 개별 조회 기능 -->
+	<select id="selectOne" resultMap="scoreMap">
+		SELECT * FROM scores
+		WHERE stu_id = #{num}
+	</select>
+	
+	
+	
+	
+	
+	
+</mapper>

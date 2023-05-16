@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+		
+		
+		
+		
+		
+		
+	<!--  JDBC, DB 관련 빈을 등록하고 관리하는 설정 파일 -->
+	
+	<!--  히카리 커넥션 풀 빈 등록부터 하자 -->
+	
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	
+		<!-- HikariConfig 클래스 내부의 필드값을 초기화 하기 위해 setter 메서드 호출  -->
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />  <!-- 필드명을 쓴다. 필드명을 부르면 세터에 맞게 자동으로 돼서 값을 넣어준다! -->
+		<property name="jdbcUrl" value="jdbc:mysql://Localhost:3306/spring?serverTimezone=Asia/Seoul"/>  <!-- 파라미터값하나넣는의미에서 ?를 넣음. 이거 안하면 시간대 안맞아서 로그인 안될 수 도 있음.  -->
+		<!-- 커넥션풀 제공할 떄 아디 비번도 알려줬었지 -->
+		<property name="username" value="spring"/>
+		<property name="password" value="spring"/>
+	</bean>
+		
+		
+		
+		<!-- 히카리는 데이터소스타입의 객체도 지원한다. -->
+		<!-- 히카리 데이터소스 빈 등록(커넥션 풀 정보를 담는 객체 등록) -->
+		<bean id="ds" class="com.zaxxer.hikari.HikariDataSource">
+			<constructor-arg ref="hikariConfig" /> <!--빈 등록된 객체를 여기에 전달하는거니 ref로.  -->
+		</bean>		 <!-- 생성자 매개값으로 히카리를 주입해놨다. -->
+		
+		
+		
+		
+		<!-- 이제 스프링 JDBC를 사용하기 위한 핵심 개체인 JdbcTemplate 클래스를 빈으로 등록하자 -->
+		<!-- 이제 히카리가 아닌 JDBC템플릿만 끌어오면 된다. 히카리도 끌려오기떄문.-->
+		<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> <!-- 지목하기 위한 그냥 id짓는거야~ -->
+			<!-- 얘는 세터메서드로 주입해준다. -->
+			<property name="dataSource" ref="ds" /> <!-- 이 setter메서드인 dataSource를 통해 전달하고 싶은 객체는 ds이다. -->
+		</bean>
+		
+		
+		
+		<!-- 마이바티스 sql 동작을 위한 핵심 객체인 SqlSessionFactory 클래스를 빈 등록하자 -->
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="ds" />
+			<property name="mapperLocations" value="classpath:/mappers/**/*Mapper.xml" /> <!-- 인터페이스를 구현하는 클래스가 아닌 xml형식으로 작성하고, 그 위치를 value 에 적어준다 -->
+		</bean>		
+		
+		
+		
+ 		<!-- 
+			SqlSessionFactory가 여러분이 지정하신 경로의 xml파일을 클래스로 변환하여
+			bean으로 등록하려는 시도를 할 때, 어떤 타입으로 빈 등록을 할 지를 결정해야 하는데,
+			이미 xml 파일에는 해당 파일이 어떤 인터페이스를 구현하는 구현체인지는 명시되어 있다.
+		 	그 인터페이스가 존재하는 패키지의 경로를 탐색하라는 태그이다.
+		 -->
+		<mybatis-spring:scan base-package="com.spring.db.repository"/> <!-- Namespaces가서 스프링 체크한 후 자동완성 먹음 -->
+		
+		
+				
+		
+		
+		
+		
+</beans>

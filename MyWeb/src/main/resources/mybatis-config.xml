@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 5 -->
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+    
+
+<configuration>
+	
+	<settings>
+		
+		
+		<!-- 
+			 MyBatis에서는 쿼리에 맵핑되는 전달되는 파라미터에 NULL이 들어가면 에러가 발생한다.
+			 우리는 널을 일부로 줄 때도 있기 때문에 value에 전달할 값이 NULL일 경우,
+			 처리할 값을 지정하면 그 값으로 데이터베이스에 값이 세팅이 된다.
+		 -->
+		
+		<!-- FreeBoardMapper.xml에 VALUES(#{title}, #{writer}, #{content})값들을 전달받는다. 이 값들이  -->
+		<setting name="jdbcTypeForNull" value="NULL"/>	<!-- 이 설정은 마이바티스는 파라미터 값에 널들어가면 데이터를 안넣어준다. 에러를 준다. -->
+		
+		<!-- 데이터베이스로부터의 응답을 얼마나 오래 기다리게 할지를 판단하는 타임아웃 설정 (밀리초로). 즉, 최대 대기시간은 3초다. 3초넘으면 에러처리. -->
+		<setting name="defaultStatementTimeout" value="3000" />
+		
+		
+		
+		<!-- 이제 우리가 이 파일을 만든 주 목적. -->
+		<!-- 언더스코어 표기법을 카멜 케이스로 자동 변환하는 설정을 true로 지정. -->
+		<!-- reg_date -> regDate 로 만들어줌 -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	
+	</settings>
+	
+	
+		
+		<typeAliases>
+			<typeAlias type="com.spring.myweb.command.FreeBoardVO" alias="board"/>
+		</typeAliases>
+		<!-- 그럼이제 FreeBoardVO를 지목할 때 마다 이거를 board라고 얘기할 것이다. -->
+	
+		<!-- 그럼이제 FreeBoardMapper.xml에서
+		<select id="getList" resultType="board"> 라고만 적어줘도 된다. 적으러가자
+		 -->
+		
+		
+		
+		
+		
+		
+		<!-- 이런 설정도 가능하다. -->
+		<!-- 인터페이스 mapper 구현체 xml파일의 경로를 표시하는 태그. -->
+		<!-- 우리는 SqlSessionFactoryBean을 등록할 때 이미 지정했기 떄문에 -->
+		<!-- 추가로 작성할 필요 X. 즉, 우리는 이미 mapperlocations을 정했기 때문에..-->
+	<!--<mappers>
+			<mapper resource="classpath:/mappers/*mapper.xml"/>
+		</mappers> -->
+		
+		
+		
+		
+	
+	
+	
+	
+		
+</configuration>
