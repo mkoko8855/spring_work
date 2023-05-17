@@ -3,6 +3,7 @@ package com.spring.myweb.freeboard.mapper;
 import java.util.List;
 
 import com.spring.myweb.command.FreeBoardVO;
+import com.spring.myweb.util.PageVO;
 
 //interface 2
 public interface IFreeBoardMapper { //각 서비스가 어떤 과정을 거치는가.
@@ -14,7 +15,10 @@ public interface IFreeBoardMapper { //각 서비스가 어떤 과정을 거치�
 	
 	
 	//글 목록
-	List<FreeBoardVO> getList();
+	List<FreeBoardVO> getList(PageVO vo);
+	
+	//총 게시물 수 구하기
+	int getTotal(PageVO vo);
 	
 	
 	

@@ -1,4 +1,4 @@
-package com.spring.myweb;
+package com.spring.myweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.spring.myweb.command.FreeBoardVO;
 import com.spring.myweb.freeboard.service.IFreeBoardService;
+import com.spring.myweb.util.PageCreator;
+import com.spring.myweb.util.PageVO;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/freeboard") // 얘는freeboard로시작해야해~
+@Slf4j //log4j의 부모를 불러주는 것을 권장한다. (롬복에서 준다). 이걸 쓰면 로그를 확인할 수 있다.
 public class FreeBoardController {
 
 	// 컨트롤러는 서비스와 의존관계가있으니
@@ -26,8 +31,17 @@ public class FreeBoardController {
 
 	// 목록 화면 짜보자
 	@GetMapping("/freeList")
-	public void freeList(Model model) {
-		model.addAttribute("boardList", service.getList());
+	public void freeList(PageVO vo, Model model) {
+		PageCreator pc = new PageCreator(vo, service.getTotal(vo)); //vo와 인트값을 받는 getTotal만 선언했었다.
+		//위 마지막에 vo를 써줬다.  키워드와 컨디션에 맞게 값을 불러오기위해..그리고 아이프리보드매퍼와 아이프리보드서비스쪽도 변경하자.
+		//이제 PageCreator의 calcDataOf뭐시기가 자동으로 돌겠다
+		
+		
+		log.info(pc.toString()); //위에 아노테이션으로 @Slf4j를 부른 뒤 사용가능.
+		
+		
+		model.addAttribute("boardList", service.getList(vo)); //getList()였는데 PageVO도 받을 수 있으니 vo 적어주자. 서비스쪽도 아이프리보드서비스 인터페이스 건들여주자.
+		model.addAttribute("pc", pc);
 		// 서비스는 컨트롤러에게 요청을 할 것이고 프리보드서비스로가자
 		/*
 		 * 가서 최상단에 이거 써주자
@@ -72,8 +86,14 @@ public class FreeBoardController {
 	
 	
 	//글 상세보기 처리
-	@GetMapping("/content/{bno}")
-	public String getContent(@PathVariable int bno, Model model) {
+	
+	//@PathVariable은 URL 경로에 변수를 포함시켜 주는 방식이다.
+	//그리고, NULL이나 공백이 들어갈 수 있는 파라미터라면 적용하지 않는 것을 추천한다. 
+	//그리고, 파라미터 값에 .이 포함되어 있다면 . 뒤의 값은 잘린다는 것을 알아두세요!
+	//{} 안에 변수명을 지어주시고, @PathVariable 괄호 안에 영역을 지목해서 값을 받아온다.
+	@GetMapping("/content/{bno}") //즉, 이 {bno}부분에 NULL이나 공백이 들어올 수 있다면 추천하지 않는다는 것이다.
+	
+	public String getContent(@PathVariable int bno, @ModelAttribute("p") PageVO vo, Model model) {
 		model.addAttribute("article", service.getContent(bno));
 		//작성했으니 프리보드서비스 ㄱㄱ
 		
@@ -102,7 +122,7 @@ public class FreeBoardController {
 	@PostMapping("/update")
 	public String update(FreeBoardVO vo){			//리다이렉트처리해야하니 String
 		service.update(vo);
-		return "redirect:/freeboard/content/" + vo.getBno();
+		return "redirect:/freeboard/content/" + vo.getBno(); //원래는 content/뒤에 ?bno였는데 vo.getBno로바꿈
 	}
 	
 	

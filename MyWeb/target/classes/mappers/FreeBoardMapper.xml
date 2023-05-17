@@ -8,6 +8,36 @@
 <mapper
 	namespace="com.spring.myweb.freeboard.mapper.IFreeBoardMapper">  <!-- freeBoardMapper가서 패키지 빼고 복붙 후 IFreeBoardMapper적어줌 -->
 
+	
+	<!-- 
+		# 동적 SQL 쿼리 란?
+		태그로 조건문을 사용하여 쿼리의 실행을 동적으로 제어할 수 있는 마이바티스의 문법이다.
+		중복된 SQL 쿼리를 피할 수 있다. 그리고, 상황에 따른 능동적 대처가 가능하다.
+		미리 쿼리문을 준비해 놓고, <include refid="이름(id)" /> 를 통해 삽입하여 가능하다.
+	 -->
+	<sql id="search">  <!-- 지목을 위한 id를 정해주자 -->
+		<if test="condition == 'title'">
+			WHERE title LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		
+		<if test="condition == 'writer'">
+			WHERE writer LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		
+		<if test="condition == 'content'">
+			WHERE content LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+		
+		<if test="condition == 'titleContent'">
+			WHERE title LIKE CONCAT('%', #{keyword}, '%')
+			OR content LIKE CONCAT('%', #{keyword}, '%')
+		</if>
+	</sql>
+
+
+
+
+
 	<!-- insert부터 테스트 진행 해보자 -->
 	<insert id="regist"> <!-- id는 내가 구현하고자 하는 추상메서드 이름! -->
 		INSERT INTO freeboard
@@ -18,8 +48,23 @@
 	
 	<select id="getList" resultType="board"> <!-- 여기 board는 mybatis-config에서 설정해줘서 이렇게 적었음. -->
 		SELECT * FROM freeboard
+		<include refid="search" /> <!-- 이걸하면 메서드를 4개나 만드는 참사를 막을 수 있다. sql을 search라고했으니 그 내용을 여기에 삽입을 하겠다는 것이다!-->
 		ORDER BY bno DESC
+		<!-- 이제 페이징을 위해 리밋을 해줄거다 여기넌 PageVO객체 하나가 전달되고있다.-->
+		LIMIT #{pageStart}, #{cpp} <!-- PgaeVO에 적어준 것을 확인하자. 그래서 #{pageStart}라고 적어줬다. -->
 	</select>
+
+
+
+	<select id="getTotal" resultType="int"> <!-- 리턴이 있으면 작성해줘야한다. 리턴타입은 int야~ -->
+		SELECT COUNT(*)
+		FROM freeboard
+		<include refid="search" /> <!-- 이제는 검색 결과에 따른 sql WHERE절을 맞게 해서 조회를 하고 그 조회된 개수에 맞춰서 페이징이 들어가야 한다. -->
+	</select>
+
+
+
+
 
 
 	<select id="getContent" resultType="board"> <!-- board대신에 원래는 resultMap을 썼었어야했다. 위에 리절트맵을 선언하고 타입을 패키지 경로로 되게 길게 썼었는데 훨씬 편해졌다. -->
@@ -41,11 +86,17 @@
 
 	
 	<delete id="delete">
-	
 		DELETE FROM freeboard
 		WHERE bno=#{bno}
-	
 	</delete>
+
+	
+	
+	
+
+
+
+
 
 
 

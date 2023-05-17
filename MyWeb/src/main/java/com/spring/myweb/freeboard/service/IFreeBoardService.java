@@ -3,6 +3,7 @@ package com.spring.myweb.freeboard.service;
 import java.util.List;
 
 import com.spring.myweb.command.FreeBoardVO;
+import com.spring.myweb.util.PageVO;
 
 //interface 2 > 서비스는 클래스계층이 있어야겟지 FreeBoardService만들어주자(클래스에 인터페이스add해서.)
 public interface IFreeBoardService { //각 서비스가 어떤 과정을 거치는가.
@@ -14,7 +15,13 @@ public interface IFreeBoardService { //각 서비스가 어떤 과정을 거치�
 	
 	
 	//글 목록
-	List<FreeBoardVO> getList();
+	List<FreeBoardVO> getList(PageVO vo);
+	
+	
+	
+	
+	//총 게시물 수 구하기
+	int getTotal(PageVO vo);
 	
 	
 	

@@ -73,6 +73,7 @@
 		 	그 인터페이스가 존재하는 패키지의 경로를 탐색하라는 태그이다.
 		 -->
 		<mybatis-spring:scan base-package="com.spring.myweb.freeboard.mapper"/> <!-- Namespaces가서 스프링 체크한 후 자동완성 먹음 -->
+		<mybatis-spring:scan base-package="com.spring.myweb.user.mapper"/> 
 		
 	
 	

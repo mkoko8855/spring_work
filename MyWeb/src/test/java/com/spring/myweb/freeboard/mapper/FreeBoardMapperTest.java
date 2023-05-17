@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.spring.myweb.command.FreeBoardVO;
+import com.spring.myweb.util.PageVO;
 
 @ExtendWith(SpringExtension.class)   //테스트 환경을 만들어주는 junit5 객체 로딩
 @ContextConfiguration(locations = {  
@@ -42,15 +43,18 @@ public class FreeBoardMapperTest {
 		//기븐에쓸거없으면 생략하던가~......
 		
 		//given에는 줄 값이 있으면 준다. given: 테스트를 위해 주어질 데이터(ex: parameter)
-		FreeBoardVO vo = new FreeBoardVO();
-		vo.setTitle("두번째 글");
-		vo.setWriter("abc1234");
-		vo.setContent("메롱메롱");
+		for(int i=1; i<=200; i++) {
+			FreeBoardVO vo = new FreeBoardVO();
+			vo.setTitle("테스트 제목 " + i); //i는 구분을 위해. 1, 2, 3, 4, ..
+			vo.setWriter("abc1234");
+			vo.setContent("테스트 내용 입니다. " + i);
+			
+			//when: 테스트 실제 상황
+			mapper.regist(vo);
+		}
 		
-		//when: 테스트 실제 상황
-		mapper.regist(vo);
+		//then: 테스트 결과를 확인. (귀찮으니 워크벤치에서 확인하자..)
 		
-		//then: 테스트 결과를 확인
 	}
 		
 		
@@ -58,13 +62,17 @@ public class FreeBoardMapperTest {
 		
 		//테스트 메서드(조회)를 작성하자. 글 목록전체를 불러오자. List<프리보드VO vo>getList();
 		@Test
-		@DisplayName("전체 글 목록을 조회하고, 조회된 글 개수를 파악했을 때 하나가 조회될 것이다.") 
+		@DisplayName("사용자가 원하는 페이지 번호에 맞는 글 목록을 불러 올 것이고, 게시물의 개수는 사용자가 원하는 만큼의 개수를 가진다.") 
 		void getListTest() {
+			
+			PageVO vo = new PageVO();
+			vo.setPageNum(7); //7한번줘보자
+			
 			//given단을 보자.
 			//줄게 없으니 given은 건너 뛰자
 			//when단을 보자. 불러보자
 			//매퍼야 전체 다가져와.
-			List<FreeBoardVO> list = mapper.getList(); //그럼 겟리스트가 우리에게 List를 준다. 앞에 List<>써서 받아보자
+			List<FreeBoardVO> list = mapper.getList(vo); //그럼 겟리스트가 우리에게 List를 준다. 앞에 List<>써서 받아보자
 			
 			//then단을 보자.
 			//일단 조회가 진행되는지 체크를 해보기 위해
@@ -73,10 +81,10 @@ public class FreeBoardMapperTest {
 			 Sysouttem.(vo);
 			 } 이 문장을 이렇게 쓰자
 			 */ 
-			list.forEach(vo -> System.out.println(vo));
+			list.forEach(article -> System.out.println(article)); //람다식표현
 			
-			assertEquals(2, list.size()); //나는 같을 것이라 단언한다. 즉, 리스트의 사이즈가 하나 일 것이라고. 레지스트 테스트가 하나란 것이라고 단언할 수 있다. 그러면 이 테스트를 돌렸을 때 리스트의 사이즈가 1이 아니면 터진다. 1이면 통과.
-			
+			assertEquals(vo.getCpp(), list.size()); //나는 같을 것이라 단언한다. 즉, 리스트의 사이즈가 하나 일 것이라고. 레지스트 테스트가 하나란 것이라고 단언할 수 있다. 그러면 이 테스트를 돌렸을 때 리스트의 사이즈가 1이 아니면 터진다. 1이면 통과.
+			//한 화면에 보여줄 게시글 만큼만이니 vo.getCpp() 겠지.
 		}
 		
 		
@@ -126,8 +134,6 @@ public class FreeBoardMapperTest {
 			mapper.delete(bno);
 			
 			//검증단계인 덴 단에는
-			//글의 개수는 전체조회했을때 하나 일 것이고 
-			assertEquals(1, mapper.getList().size());
 			assertNull(mapper.getContent(bno));
 		}
 		

@@ -16,6 +16,7 @@
 			 처리할 값을 지정하면 그 값으로 데이터베이스에 값이 세팅이 된다.
 		 -->
 		
+		
 		<!-- FreeBoardMapper.xml에 VALUES(#{title}, #{writer}, #{content})값들을 전달받는다. 이 값들이  -->
 		<setting name="jdbcTypeForNull" value="NULL"/>	<!-- 이 설정은 마이바티스는 파라미터 값에 널들어가면 데이터를 안넣어준다. 에러를 준다. -->
 		
@@ -51,7 +52,7 @@
 		<!-- 인터페이스 mapper 구현체 xml파일의 경로를 표시하는 태그. -->
 		<!-- 우리는 SqlSessionFactoryBean을 등록할 때 이미 지정했기 떄문에 -->
 		<!-- 추가로 작성할 필요 X. 즉, 우리는 이미 mapperlocations을 정했기 때문에..-->
-	<!--<mappers>
+		<!--<mappers>
 			<mapper resource="classpath:/mappers/*mapper.xml"/>
 		</mappers> -->
 		

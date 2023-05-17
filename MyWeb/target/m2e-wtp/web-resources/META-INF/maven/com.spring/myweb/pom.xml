@@ -233,6 +233,21 @@
 		</dependency>
 
 
+		<!-- log4jdbc -log4j2 - jdbc4.1 (db log 출력) -->
+		<!-- https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1 -->
+		<dependency>
+    		<groupId>org.bgee.log4jdbc-log4j2</groupId>
+    		<artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
+    		<version>1.16</version>
+		</dependency>
+		
+
+
+
+
+
+
+
 	</dependencies>
 	<!-- 의존라이브러리모음은 여기서 끝남. -->
 
