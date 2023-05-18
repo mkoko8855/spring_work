@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 이메일 인증 관련 빈 등록 -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.naver.com" />  <!-- 메일을 전송할 계정이 뭐냐에 따라 다름. google이라면 smtp.gmail.com 이다. -->
+		<property name="port" value="465" />   <!-- 포트번호가 gmail이면 587이다. -->
+		<property name="username" value="${email.account}" />  
+		<property name="password" value="${email.password}" />  
+	
+		<property name="javaMailProperties"> 
+			<props>
+				
+				<prop key="mail.smtp.starttls.enable">true</prop>
+                <!-- <prop key="mail.smtp.ssl.enable">true</prop> -->
+                <prop key="mail.smtp.auth">true </prop>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.debug">true</prop>
+                <prop key="mail.smtps.ssl.trust">*</prop>
+                <prop key="mail.smtp.ssl.protocols">TLSv1.2</prop>
+				
+			</props>
+		</property>
+	
+	
+	</bean>
+
+
+
+</beans>
