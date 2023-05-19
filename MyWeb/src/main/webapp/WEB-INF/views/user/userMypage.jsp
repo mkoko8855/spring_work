@@ -1,6 +1,11 @@
 ﻿<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
+
+
+	<%@ include file="../include/header.jsp"%>
+
+
 	<section>
         <!--Toggleable / Dynamic Tabs긁어옴-->
         <div class="container">
@@ -121,3 +126,8 @@
             </div>
         </div>
     </section>
+    
+    
+    
+    	<%@ include file="../include/footer.jsp"%>
+    

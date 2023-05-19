@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<!-- namespace 탭에서 mvc 기능을 추가를 가장 먼저 해야 한다 xmlns:mvc:"~~~~라고 위에 적혀있다. -->
+
+<!-- web.xml에 초기 설정 파일로 이 파일을 추가해야 한다. -->
+
+
+
+<bean id="userLoginSuccessHandler" class="com.spring.myweb.util.interceptor.UserLoginSuccessHandler"/> <!-- 빈으로 등록하려는 것을 적어주자. 유저로그석세스 파일의 맨 위의 패키지 명과 클래스 이름을 적어 줌 -->
+<bean id="userAuth" class="com.spring.myweb.util.interceptor.UserAuthHandler"/> <!-- 아래가서 mvc:mapping써주러가자 -->
+
+
+
+
+<mvc:interceptors>
+
+	<!-- 로그인 이후에 실행되는 postHandler를 어떤 url에 동작하게 할 지 세팅한다. -->
+	<mvc:interceptor>
+		<mvc:mapping path="/user/userLogin"/> <!-- 이 요청에 발동되게 하겠다. -->
+		<ref bean="userLoginSuccessHandler"/> <!-- 즉, bean id="~~가 빈 등록인데, 인터셉트를 건 것이다. 이 요청에 동작하는 인터셉트는 바로 위의 id값이다. -->
+	</mvc:interceptor>
+
+	
+	<!-- 로그인 권한 체크 인터셉터 url 맵핑 -->
+	<mvc:interceptor>
+		<mvc:mapping path="/freeboard/regist"/> 
+		<mvc:mapping path="/user/userMypage"/>
+		<mvc:mapping path="/freeboard/content/**" />
+		<ref bean="userAuth" />
+	
+	</mvc:interceptor>
+
+
+
+
+
+
+
+</mvc:interceptors>
+
+
+
+
+
+
+
+
+</beans>
