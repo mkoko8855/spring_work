@@ -25,3 +25,85 @@ CREATE TABLE jdbc_board(
     content VARCHAR(2000),
 	reg_date DATETIME DEFAULT current_timestamp #현재시간이들어오게됨. Now()로 해도됨.
 );
+
+
+
+
+#########################################################################################
+#MyWeb 프로젝트 시작
+
+CREATE TABLE freeboard(
+	bno INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(300) NOT NULL,
+    writer VARCHAR(50) NOT NULL,
+    content VARCHAR(3000) NOT NULL,
+    reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT NULL          #수정된 날짜
+);
+
+select * from freeboard;
+
+SELECT COUNT(*) FROM freeboard;
+
+
+
+SELECT * FROM freeboard
+ORDER BY bno DESC
+LIMIT 0, 10;            #LiMIT으로 범위를 지정해서 값을 끌고 올 수 있음. > 앞에는 시작인덱스번호(1번부터시작안하고 0번부터 시작한다. 첫번째행이 0이다.) , 뒤는 제한을 할 개수다(즉, 1번인덱스부터 10개만가져와~).     즉, ROWNUM이라는 개념이 없다.   즉, 1번째행부터 10개가져와~
+#사용자가 2페이지를 보고싶다고하면 0, 10이 아니라 10,10 이고 3페이지 보고싶으면 20, 10 이겠지. 왜? 10개씩보여준다고했으니 10개넘기고 다음페이지 보여줘야 하잖아.
+#첫자리는 (page-1)*cpp  (사용자가 2페이지보여달라하면 (2-1)*10 = 10의 공식)
+
+
+#화면은 끝, 회원가입을 위한 테이블
+CREATE TABLE users(
+	user_id VARCHAR(50) PRIMARY KEY,
+    user_pw VARCHAR(50) NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
+    user_phone1 VARCHAR(50),
+    user_phone2 VARCHAR(50),
+    user_email1 VARCHAR(50),
+    user_email2 VARCHAR(50),
+    addr_basic VARCHAR(300),
+    addr_detail VARCHAR(300),
+    addr_zip_num VARCHAR(50), #우편번호
+    reg_date DATETIME DEFAULT CURRENT_TIMESTAMP #가입날짜
+);
+
+
+
+select * from users;
+
+
+
+
+
+# 표준 안시 조인 문법 사용하자.  이걸 usermapper.xml getInfo메서드에 붙여넣자~
+SELECT user_name, user_phone1, user_phone2, user_email1, user_email2, addr_basic, addr_detail, addr_zip_num, f.bno, f.title, f.reg_date
+FROM users u
+LEFT OUTER JOIN freeboard f
+ON u.user_id = f.writer #두 테이블의 공통을 id로. #이너조인은 게시판 글을 못불러도 회원 정보는 가지고 와야 하니 레프트 아우터 조인해야한다.
+WHERE u.user_id = 'abc1234'
+ORDER BY f.bno DESC
+LIMIT 30, 10; #페이징 처리
+			
+
+
+
+
+
+
+# 댓글처리
+CREATE TABLE freereply (
+	rno INT PRIMARY KEY AUTO_INCREMENT,
+    bno INT,  #외래키
+    
+    FOREIGN KEY (bno)
+    REFERENCES freeboard(bno)
+    ON DELETE CASCADE,
+    
+    reply VARCHAR(1000),
+    reply_id VARCHAR(50),
+    reply_pw VARCHAR(50),
+    reply_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT NULL
+);

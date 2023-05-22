@@ -52,7 +52,7 @@ public class ReplyController {
 		List<ReplyVO> list = service.getList(bno, pageNum); //이걸 넘겨주자
 		int total = service.getTotal(bno); 
 		//위 두개를 MAP으로 감싸서 클라이언트한테 던져주자!
-		
+	
 		return null;
 	}
 		
