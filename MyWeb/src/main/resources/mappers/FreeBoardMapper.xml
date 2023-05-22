@@ -36,6 +36,14 @@
 
 
 
+	<sql id="myPage">
+		<if test="loginId != null">
+			WHERE writer = #{loginId}
+		</if>
+	</sql>
+
+
+
 
 
 	<!-- insert부터 테스트 진행 해보자 -->
@@ -60,6 +68,7 @@
 		SELECT COUNT(*)
 		FROM freeboard
 		<include refid="search" /> <!-- 이제는 검색 결과에 따른 sql WHERE절을 맞게 해서 조회를 하고 그 조회된 개수에 맞춰서 페이징이 들어가야 한다. -->
+		<include refid="myPage" /> <!-- 어차피 MyPage에서는 search라는게 안돌아감. 마이페이지에서 서치 구현할꺼라면 합쳐줄수있겟다. 그러나 굳이 X -->
 	</select>
 
 

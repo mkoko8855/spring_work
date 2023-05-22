@@ -1,8 +1,7 @@
 package com.spring.myweb.user.service;
 
-import java.util.Map;
-
 import com.spring.myweb.command.UserVO;
+import com.spring.myweb.util.PageVO;
 
 public interface IUserService {
 
@@ -31,7 +30,7 @@ public interface IUserService {
 	//로그인
 	//MyBatis로 DB연동을 진행할 떄, 파라미터 값이 2개 이상일 때 그냥 보내시면
 	//에러가 발생하기 때문에 조치가 필요하다.
-	UserVO login(String id, String pw); //리턴은 UserVO로~. 그러나 Mybatis는 값을 2개 줄때는 인식을 못한다. 값을 2개 이상 있을 때는 맵핑을 해야 한다. 즉, id와 pw가 누군지 알려줘야 한다. 
+	String login(String id, String pw); //(5/22 이것도 String으로바꿔줌. 조인을 강제하기위해)  그러나 Mybatis는 값을 2개 줄때는 인식을 못한다. 값을 2개 이상 있을 때는 맵핑을 해야 한다. 즉, id와 pw가 누군지 알려줘야 한다. 
 	//즉, 3가지 방법이 있는데
 	//1. Map으로 포장하는 것이다. > String id, String pw가 아닌 Map<String, String> map을 써주고 UserMapperTest가서 실험ㄱㄱ
 	
@@ -46,7 +45,7 @@ public interface IUserService {
 	
 	//회원 정보 얻어오기
 	//나중에 작성 글 목록까지 불러올 것이다
-	UserVO getInfo(String id);
+	UserVO getInfo(String id, PageVO vo); //유저서비스도 PageVO vo써주자
 	
 	
 	

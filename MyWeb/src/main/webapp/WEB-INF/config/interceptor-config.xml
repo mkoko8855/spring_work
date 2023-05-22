@@ -13,7 +13,7 @@
 
 
 <bean id="userLoginSuccessHandler" class="com.spring.myweb.util.interceptor.UserLoginSuccessHandler"/> <!-- 빈으로 등록하려는 것을 적어주자. 유저로그석세스 파일의 맨 위의 패키지 명과 클래스 이름을 적어 줌 -->
-<bean id="userAuth" class="com.spring.myweb.util.interceptor.UserAuthHandler"/> <!-- 아래가서 mvc:mapping써주러가자 -->
+<bean id="userAuth" class="com.spring.myweb.util.interceptor.UserAuthHandler"/> <!-- 아래가서 mvc:mapping써주러가자 --> <!-- UserAuthHandler클래스를 사용하기 위해 하나 더 선언 -->
 
 
 

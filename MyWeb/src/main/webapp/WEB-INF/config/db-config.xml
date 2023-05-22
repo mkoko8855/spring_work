@@ -74,6 +74,7 @@
 		 -->
 		<mybatis-spring:scan base-package="com.spring.myweb.freeboard.mapper"/> <!-- Namespaces가서 스프링 체크한 후 자동완성 먹음 -->
 		<mybatis-spring:scan base-package="com.spring.myweb.user.mapper"/> 
+		<mybatis-spring:scan base-package="com.spring.myweb.reply.mapper.mapper"/> 
 		
 	
 	

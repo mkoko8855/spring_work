@@ -1,5 +1,7 @@
 package com.spring.myweb.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.myweb.command.UserVO;
+import com.spring.myweb.freeboard.service.IFreeBoardService;
 import com.spring.myweb.user.service.IUserService;
 import com.spring.myweb.util.MailSenderService;
+import com.spring.myweb.util.PageCreator;
+import com.spring.myweb.util.PageVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +32,10 @@ public class UserController {
 	private IUserService service; //service라는 변수에 자동으로 주입해줘~
 	
 	@Autowired
-	private MailSenderService mailService; //얘도 주입 받을꺼다.
+	private IFreeBoardService boardService; //게시글 총 개수를 갖다줄수있어야하기떄문에 이렇게선언해보자 
+	
+	@Autowired
+	private MailSenderService mailService; //얘도 주입 받을꺼다.(이메일 전송을 담당하는 변수)
 	
 	
 	
@@ -35,6 +43,7 @@ public class UserController {
 	//회원가입 페이지로 이동하는 메서드(join누르면감)
 	@GetMapping("/userJoin")
 	public void userJoin() {
+		System.out.println("회원가입 페이지로 이동");
 		//말그대로 페이지 이동을 위한 메서드다. void처리했으니 user폴더의 userJoin으로간다.
 	}
 	
@@ -92,8 +101,9 @@ public class UserController {
 		 ra.addFlashAttribute("msg", "joinSuccess"); //회원 가입이 성공하고 로그인 페이지로 가는 사람은 msg값이 있는거고 메뉴에 있는 로그인 눌러서 간 사람은 msg가 없겠지. 구분하기 위해 적어줬다.
 		 
 		 
-		 return "redirect:/user/userLogin";
+		 return "redirect:/user/userLogin"; //회원가입 처리가 완료되면 로그인 페이지로 이동.
 	}
+	
 	
 	
 	
@@ -106,6 +116,8 @@ public class UserController {
 	
 	
 	
+	
+	
 	//로그인 요청이 들어왔다!
 	@PostMapping("/userLogin")
 	public void login(String userId, String userPw, Model model){ 		//로그인에 성공했는데 왜 다시돌아가려고 보이드를쓸까.
@@ -114,14 +126,29 @@ public class UserController {
 		model.addAttribute("user", service.login(userId, userPw)); //모델에 user라는 이름으로 서비스에게 id와 pw를 주면서 로그인 처리를 진행해라~
 		//로그인에 성공했다면 로그인 성공한 사람의 userId와 userPw를 준다.	
 		//아디나 비번이 틀려서 로그인에 실패했다면 null을 준다.
-	}
+	}//UserLoginSuccessHandler클래스랑 연관되어있으니 확인하자
 	
 	
 	
 	
-	//마이페이지 이동 요청
+	
+	
+	//마이페이지 이동 요청. 
 	@GetMapping("/userMypage")
-	public void userMypage() {
+	public void userMypage(HttpSession session, Model model, PageVO vo) {
+		// 5/22 조인을 강제사용하겠다고했음(vo를 id로바꿔줌)
+		
+		//세션은 리퀘스트로뽑아야지. 핸들러어댑터한테 얘기하자. HttpSession session.    그리고 모델도줘  Model model
+		
+		// 세션 데이터에서 id를 뽑아야 sql을 돌릴 수 있다.
+		String id = (String) session.getAttribute("login");
+		vo.setLoginId(id);//현재 로그인 중인 id를 주자. 
+		PageCreator pc = new PageCreator(vo, boardService.getTotal(vo));
+		
+		model.addAttribute("userInfo", service.getInfo(id, vo)); 		//서비스야 겟인포좀. id랑  page vo줄게. (getInfo메서드는 userVO를 준다)
+		model.addAttribute("pc", pc);
+		
+		//그럼 UserSurvice클래스에서 getInfo가 불린다!
 		
 	}
 	

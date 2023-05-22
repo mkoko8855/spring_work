@@ -44,13 +44,13 @@
 		
 			if(msg === 'joinSuccess'){
 				alert('회원 가입 정상 처리되었습니다.');
-			} else if(msg=== 'loginFail'){
+			} else if(msg === 'loginFail'){
 				alert('로그인에 실패했습니다.');
 			}
 		
 			
 			//문제 : id, pw 입력란이 공백인지 아닌지 확인한 후, 공백이 아니라면 submit을 진행하세요.
-			//요청 url은 /user/userLogin -> post로간다. (비동기방식으로X)
+			//요청 url은 /user/userLogin -> post로간다. (비동기방식으로X. 비동기를 남발하는건 좋은게 아님. 게시글 등록이 완료되면 목록으로 빠지는데 이걸 굳이 비동기로 할 필요는 없다. 따로 값을 보내줘야 하는 로직을 추가해야 하니까..)
 			
 			document.getElementById('loginBtn').onclick = () => {
 				if(document.getElementById('id').value === ''){
@@ -68,10 +68,6 @@
 			document.getElementById('joinBtn').onclick = () => {
 				location.href = '${pageContext.request.contextPath}/user/join'; //회원가입 누르면 이쪽으로 보내주겠다고~
 			}
-			
-			
-			
-			
 			
 			
 			

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    
+    
+    
+<mapper namespace="com.spring.myweb.reply.mapper.IReplyMapper">
+
+	<insert id="replyRegist">
+		INSERT INTO freereply
+		(bno, reply, reply_id, reply_pw)
+		VALUES(#{bno}, #{reply}, #{replyId}, #{replyPw})
+	</insert>
+	
+	
+	
+	<select id="getList" resultType="reply"> <!-- 마이바티스에 달아놨으니 짧게 쓰기 가능 -->
+		SELECT * FROM freereply
+		WHERE bno = #{bno} <!-- 여기로 map이 전달됐으니 key값을 적으면 된다.  -->
+		ORDER BY rno DESC <!-- 최신댓글이 위로 올라올 수 있도록 정렬. -->
+		LIMIT #{paging.pageStart}, #{paging.cpp}
+	</select>
+	
+	
+	
+	
+	<select id="getTotal" resultType="int">
+		SELECT COUNT(*)
+		FROM freereply
+		WHERE bno = #{bno}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+</mapper>

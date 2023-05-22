@@ -7,7 +7,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 public class UserAuthHandler implements HandlerInterceptor {
-
+	//interceptor-config클래스와 연관있다.
+	
+	
 	
 	//회원 권한이 필요한 페이지 요청이 들어 왔을 떄, 컨트롤러 보다 먼저 요청을 가로채서 
 	//확인할 인터셉터로 사용한다.
@@ -34,7 +36,7 @@ public class UserAuthHandler implements HandlerInterceptor {
 		
 		
 		
-		//return true는 로그인을 했다면 통과 라는 의미이다.
+		//return true는 로그인을 했다면 통과 라는 의미이다. 
 		return true;
 	}
 	

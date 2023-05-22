@@ -21,10 +21,26 @@ public class PageVO {
 	//위 2가지를 추가해서 PageVO로 한번에 넘기게끔 어차피 getList들어오면 PageVO를 통해 페이징 처리할 거고, 검색 결과도 페이징할꺼니까. 안넘어오면 무시해서 안쓰면되고 사용자가 검색해서 있으면 SQL결과나오게끔 하면되고..
 	
 	
+	
+	
+	
+
+
+	//myPage에서 페이징을 구현하기 위한 필드를 추가
+	private String loginId;
+	//그럼이제 PageVO도 로그인 중인 id도 전달받을 수 있겠다. 
+
+
+	
+	
+	
+	
+	
 	public PageVO() {
 		this.pageNum = 1;
 		this.cpp = 10;
 	}
+	
 	
 	
 	//get으로 시작하는 메서드 하나 선언해주자

@@ -1,10 +1,9 @@
 package com.spring.myweb.user.mapper;
 
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Param;
 
 import com.spring.myweb.command.UserVO;
+import com.spring.myweb.util.PageVO;
 
 public interface IUserMapper {
 
@@ -33,7 +32,7 @@ public interface IUserMapper {
 	//로그인
 	//MyBatis로 DB연동을 진행할 떄, 파라미터 값이 2개 이상일 때 그냥 보내시면
 	//에러가 발생하기 때문에 조치가 필요하다.
-	UserVO login(@Param("id")String id, @Param("pw")String pw); //리턴은 UserVO로~. 그러나 Mybatis는 값을 2개 줄때는 인식을 못한다. 값을 2개 이상 있을 때는 맵핑을 해야 한다. 즉, id와 pw가 누군지 알려줘야 한다. 
+	String login(String id); //그러나 Mybatis는 값을 2개 줄때는 인식을 못한다. 값을 2개 이상 있을 때는 맵핑을 해야 한다. 즉, id와 pw가 누군지 알려줘야 한다.  > 그러나 id만받게수정.
 	//즉, 3가지 방법이 있는데
 	//1. Map으로 포장하는 것이다. > String id, String pw가 아닌 Map<String, String> map을 써주고 UserMapperTest가서 실험ㄱㄱ
 	
@@ -48,7 +47,7 @@ public interface IUserMapper {
 	
 	//회원 정보 얻어오기
 	//나중에 작성 글 목록까지 불러올 것이다
-	UserVO getInfo(String id);
+	UserVO getInfo(@Param("id")String id, @Param("paging") PageVO vo); //값 2개니 Sting id, PageVO vo 라고 적으면 안됨.. 파람붙여야됨. 그러면 유저서비스쪽도 바꾸자 IUserService가자
 	
 	
 	

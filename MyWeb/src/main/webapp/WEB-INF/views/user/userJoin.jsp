@@ -254,7 +254,7 @@
 				
 				//즉즉즉즉, 패치실행후 성공했으면 then, 그 다음에 응답 객체 받아서 text만 뺀 Promise 객체로부터 data를 전달 받았다는 순서이다.
 
-				//전달 받았으니 검증해야지
+				//전달 받았으니 검증해야지. (아이디 중복 여부)
 				if(data === 'ok'){
 					//더 이상 아이디를 작성할 수 없도록 막아주겠다.
 					document.getElementById('userId').setAttribute('readonly', true);

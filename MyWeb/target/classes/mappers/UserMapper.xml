@@ -2,66 +2,117 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
- <mapper namespace="com.spring.myweb.user.mapper.IUserMapper" >
- 
- 	<!-- IUserMapper타입으로 빈이 등록이 돼야 한다.
- 		 db-config.xml에 맨아래내리면서 그곳에 마이바티스 스프링 스캔 추가!
- 	 -->
- 	<!-- 이제 매퍼테스트 진행하자. user.mapper패키지에 UserMapperTest 클래스를 만들어주고 가서 테스트 진행하자 -->
- 
- 
- 
- 
- 	<insert id="join">
- 		INSERT INTO users
- 		(user_id, user_pw, user_name, user_phone1, user_phone2, user_email1, user_email2, addr_basic, addr_detail, addr_zip_num)
- 		VALUES(#{userId}, #{userPw}, #{userName}, #{userPhone1}, #{userPhone2}, #{userEmail1}, #{userEmail2}, #{addrBasic}, #{addrDetail}, #{addrZipNum})
- 			<!-- 적었으니 UserMapperTest로가서 실행해보자 -->
- 	</insert>
- 	
- 	
- 	<select id="idCheck" resultType="int">
- 		SELECT count(*) FROM users 
- 		WHERE user_id = #{id}
- 	</select>
- 	
- 	
- 	
- 	<select id="login" resultType="user"> <!-- 여기 resultMap은 mybatis-config.xml에 user라고 적어주고 여기서 user라고 적어준 것임 -->
- 		SELECT * FROM users
- 		WHERE user_id = #{id}
- 		AND user_pw = #{pw}
- 	</select>
- 	
- 	
- 	
- 	<select id="getInfo" resultType="user">
- 		SELECT * FROM users
- 		WHERE user_id = #{id}
- 	</select>
- 	
- 	
- 	
- 	<update id="updateUser">
- 		UPDATE users
- 		SET user_pw = #{userPw},
- 		user_name = #{userName},
- 		user_email1 = #{userEmail1},
- 		user_email2 = #{userEmail2},
- 		user_phone1 = #{userPhone1},
- 		user_phone2 = #{userPhone2},
- 		addr_basic = #{addrBasic},
- 		addr_detail = #{addrDetail},
- 		addr_zip_num = #{addrZipNum},
- 		WHERE user_id = #{userId}
- 	
- 	</update>
- 	
- 	
- 	
- 	
- 	
- 	
- 	
- 
- </mapper>
+<mapper namespace="com.spring.myweb.user.mapper.IUserMapper">
+
+	<!-- IUserMapper타입으로 빈이 등록이 돼야 한다. db-config.xml에 맨아래내리면서 그곳에 마이바티스 스프링 
+		스캔 추가! -->
+	<!-- 이제 매퍼테스트 진행하자. user.mapper패키지에 UserMapperTest 클래스를 만들어주고 가서 테스트 진행하자 -->
+
+	
+	
+	<!-- collection 타입의 변수에 값을 매길 때에는 어떤 객체로 포장을 해서 넣을지를 새로운 resultMap으로 선언해 줘야 한다. -->
+	<!-- sql에서 조회하는 컬럼에 대한 모든 정보를 작성 해 줘야 한다 -->
+	<resultMap type="user" id="userMap">
+		<result property="userName" column="user_name" />
+        <result property="userPhone1" column="user_phone1" />
+        <result property="userPhone2" column="user_phone2" />
+        <result property="userEmail1" column="user_email1" />
+        <result property="userEmail2" column="user_email2" />
+        <result property="addrBasic" column="addr_basic" />
+        <result property="addrDetail" column="addr_detail" />
+        <result property="addrZipNum" column="addr_zip_num" />
+		<collection property="userBoardList" resultMap="list" /> <!-- 이제는 user라는 userVO의 별칭을 user라고 부르기로했고, 컬렉션이 추가됐는데 그 리스트의 이름은 userVO클래스에 있는 userBoardlist. -->
+	</resultMap> <!-- 즉, 위 프로퍼티인 userBoardList는 list내용을 참고해서 포장해라 라는 뜻. -->
+	
+	
+	
+	<!-- collection에 들어갈 객체가 어떤 식으로 포장 될 지를 명시해 주는 resultMap을 선언해주자 -->
+	<!-- resultMap선언. -->
+	<resultMap type="board" id="list"> <!-- list는 이름으로 그냥 지어준 거고 board타입으로포장해라! 타입은 즉, freeoboareVO의 경로로 적어준 것 -->
+		<id property="bno" column="bno" />
+		<result property="title" column="title" />
+		<result property="regDate" column="reg_date" />
+	</resultMap>   
+	
+	
+
+
+	<insert id="join">
+		INSERT INTO users
+		(user_id, user_pw, user_name, user_phone1, user_phone2, user_email1,
+		user_email2, addr_basic, addr_detail, addr_zip_num)
+		VALUES(#{userId}, #{userPw}, #{userName}, #{userPhone1}, #{userPhone2}, #{userEmail1},
+		#{userEmail2}, #{addrBasic}, #{addrDetail}, #{addrZipNum})
+		<!-- 적었으니 UserMapperTest로가서 실행해보자 -->
+	</insert>
+
+
+	<select id="idCheck" resultType="int">
+		SELECT count(*) FROM users
+		WHERE user_id = #{id}
+	</select>
+
+
+
+	<select id="login" resultType="string"> <!-- 여기 resultMap은 mybatis-config.xml에 user라고 적어주고 여기서 user라고 적어준 것임  > 그러나 수정으로 인한 리절트타입은 string으로.. 아이유저매퍼로가서 바꿔주자 -->
+		select user_pw from users
+		where user_id = #{id}
+	</select>
+
+
+
+
+	<select id="getInfo" resultMap="userMap"> <!-- getInfo메서드는 조인문으로썼다.  -->
+		SELECT 
+		user_name, user_phone1, user_phone2, user_email1, user_email2,
+		addr_basic, addr_detail, addr_zip_num, f.bno, f.title, f.reg_date
+		FROM users u
+		LEFT OUTER JOIN freeboard f
+		ON u.user_id = f.writer  
+		WHERE u.user_id = #{id}  <!-- getInfo는 id를 받으니 id라고적자 -->
+		ORDER BY f.bno DESC
+		LIMIT #{paging.pageStart}, #{paging.cpp}; 
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<update id="updateUser">
+		UPDATE users
+		SET user_pw = #{userPw},
+		user_name = #{userName},
+		user_email1 = #{userEmail1},
+		user_email2 = #{userEmail2},
+		user_phone1 = #{userPhone1},
+		user_phone2 = #{userPhone2},
+		addr_basic = #{addrBasic},
+		addr_detail = #{addrDetail},
+		addr_zip_num = #{addrZipNum},
+		WHERE user_id = #{userId}
+
+	</update>
+
+
+
+
+
+
+
+
+</mapper>
