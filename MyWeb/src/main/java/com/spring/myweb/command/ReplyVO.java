@@ -32,7 +32,7 @@ public class ReplyVO {
 	private String reply; //댓글내용
 	private String replyId; //댓글남긴사람
 	private String replyPw; //댓글비밀번호
-	private LocalDateTime replayDate;
+	private LocalDateTime replyDate;
 	private LocalDateTime updateDate;
 	
 	//매퍼테스트는 시간상 생략!

@@ -36,7 +36,7 @@ public interface IReplyMapper {
 	
 	
 	//비밀번호 확인(수정, 삭제할 때 맞으면 수정 삭제하기위해)
-	boolean pwCheck(ReplyVO vo);  
+	String pwCheck(int rno);  //비밀번호 확인. (글번호주면 암호화된 비밀번호를 리턴해줄거야) 
 	
 	
 	

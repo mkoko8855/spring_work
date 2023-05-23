@@ -1,5 +1,6 @@
 package com.spring.myweb.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,17 +53,56 @@ public class ReplyController {
 		
 		List<ReplyVO> list = service.getList(bno, pageNum); //이걸 넘겨주자
 		int total = service.getTotal(bno); 
+		
 		//위 두개를 MAP으로 감싸서 클라이언트한테 던져주자!
-	
-		return null;
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list); //댓글 목록
+		map.put("total", total); //게시글에 달려있는 댓글의 총 개수
+		return map;
 	}
 		
 	
 	
+		//댓글 수정 요청 들어옴
+	@PutMapping("/{rno}")
+	public String update(@PathVariable int rno, @RequestBody ReplyVO vo) {
+		  /*
+		  get > list
+		  post > regist 
+		  put > update
+		  delete > delete
+		  */
+		
+		//일단 비밀번호부터 확인
+		vo.setRno(rno);
+		service.pwCheck(vo); //근데 비밀번호가 암호화 됐으니 matches로 받자.  > 서비스에서 false라는 리턴값 가져왔으니
+		if(service.pwCheck(vo)) { //트루는 비번일치
+			service.update(vo);
+			return "updateSuccess"; //그냥 클라이언트 사용자 한테 얘기하는 문자열~
+		} else {
+			return "pwFail"; //그냥 클라이언트 사용자 한테 얘기하는 문자열~
+		}
+		//그럼 이제 업데이트메서드 완성하러 서비스가자.
+	}
 	
 	
 	
 	
+	
+		//	@PostMapping("/delete")
+		//public String delete(int bno) {
+		//service.delete(bno);
+		//return "redirect:/freeboard/freeList";
+		/*
+		 * @PostMapping("reply/{rno}") public String delete(@PathVariable int
+		 * rno, @RequestBody ReplyVO vo) { vo.setRno(rno); service.delete();
+		 * 
+		 * if(service.pwCheck(vo)) { service.delete(); return "zz"; } else { return
+		 * "zzz"; }
+		 * 
+		 * 
+		 * }
+		 */
 	
 	
 	

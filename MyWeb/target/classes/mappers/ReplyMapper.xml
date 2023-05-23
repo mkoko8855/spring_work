@@ -34,7 +34,25 @@
 	
 	
 	
+	<select id="pwCheck" resultType="string"> <!-- 암호호화된 비밀번호를 리턴할꺼다 -->
+	SELECT reply_pw
+	FROM freereply
+	WHERE rno = #{rno}
+	</select>
 	
+	
+	<update id="update">
+		UPDATE freereply
+		SET reply = #{reply}, update_date = current_timestamp  <!-- 지금 업데이트 된 이 시간. -->
+		WHERE rno = #{rno}
+	</update>
+	
+	
+	
+	<delete id="delete">
+	DELETE FROM freereply
+		WHERE rno=#{rno}
+	</delete>	
 	
 	
 	

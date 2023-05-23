@@ -18,6 +18,7 @@ public class ReplyService implements IReplyService {
 	@Autowired
 	private IReplyMapper mapper;
 	
+	@Autowired
 	private BCryptPasswordEncoder encoder;
 
 
@@ -67,7 +68,14 @@ public class ReplyService implements IReplyService {
 	
 	@Override
 	public boolean pwCheck(ReplyVO vo) {
-		return false;
+		String dbPw = mapper.pwCheck(vo.getRno());  //얀얀 메퍼얀 체크해라 vo줄겡
+		
+		return encoder.matches(vo.getReplyPw(), dbPw); //원래pw와 지금 dbPw
+		
+		//다르면 false가 리턴된다. 컨트롤러로 리턴이 될테니 컨트롤러로가자
+		
+		
+		
 	}
 
 	
@@ -75,13 +83,12 @@ public class ReplyService implements IReplyService {
 	
 	@Override
 	public void update(ReplyVO vo) {
-		// TODO Auto-generated method stub
-
+		mapper.update(vo); //작성하고  sql쓰러 매퍼로가자
 	}
 
 	@Override
 	public void delete(int rno) {
-		// TODO Auto-generated method stub
+		mapper.delete(rno);
 
 	}
 
