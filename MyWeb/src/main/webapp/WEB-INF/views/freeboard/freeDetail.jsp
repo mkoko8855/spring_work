@@ -99,10 +99,10 @@
 				<!--여기에 접근 반복-->
 				<!-- 댓글목록을 표헌하는 부분이다 -->
 				<div id="replyList">
-				
-				
-					
-					
+
+
+
+
 					<!-- 자바 스크립트 단에서 반복문을 이용해서 댓글의 개수만큼 반복 표현 -->
 					<!-- <div class='reply-wrap'> 여기서부터@@@@
 						<div class='reply-image'>
@@ -118,16 +118,16 @@
 							<p class='clearfix'>여기는 댓글영역</p>
 						</div>
 					</div> 여기까지의@@@@ 내용이 반복이 돼야함 -->
-					
-					
-					
-					
-					
+
+
+
+
+
 				</div>
-				
-				<button type="button" class="form-control" id="moreList">더보기(페이징)</button>
-				
-				
+
+				<button type="button" class="form-control" id="moreList" style="display: none;">더보기(페이징)</button>
+
+
 			</div>
 		</div>
 	</div>
@@ -175,7 +175,7 @@
 
 
 <script>
-	window.onload = function() { //창이 열리면 자바스크립트가 시작되어라!
+	window.onload = function() { //창이 열리면 자바스크립트가 시작.
 	
 		//댓글을 등록한다 라는 가정이라면?
 		document.getElementById('replyRegist').onclick = function() {
@@ -283,9 +283,9 @@
 					//반복문 이용해서 화면에 뿌리자. 위 html태그에서 <!-- 여기서부터@@@@ --> 부분을 찾아서 뭘 반복할건지 확인하자. 주석으로 처리하고 반복할꺼임.
 					//data.total, list로 받아왔는데 댓글이 없을 수도 있잖아
 					//즉, 응답 데이터의 길이가 0과 같거나 더 작으면 함수를 종료.
-					if(replyList.length <= 0){
+				/* 	if(replyList.length <= 0){
 						return; //종료
-					}
+					} 이건 아래서 적자 */
 					
 					
 					
@@ -304,6 +304,13 @@
 						
 						page = 1; //페이지도 1로 돌려놓겠다.
 					}
+					
+					
+					//즉, 응답 데이터의 길이가 0과 같거나 더 작으면 함수를 종료.
+					if(replyList.length<=0) return;
+					
+					
+					
 					
 					
 					
@@ -333,7 +340,7 @@
 						<div class='reply-content'>
 							<div class='reply-group'>
 								<strong class='left'>` + replyList[i].replyId +`</strong> 
-								<small class='left'>` + replyList[i].replyDate +`</small>
+								<small class='left'>` + (replyList[i].updateDate != null ? parseTime(replyList[i].updateDate) + '(수정됨)' : parseTime(replyList[i].replyDate)) +`</small>
 								<a href='` + replyList[i].rno + `' class='right replyDelete'><span class='glyphicon glyphicon-remove'></span>삭제</a> &nbsp;
 									<a href='` + replyList[i].rno + `' class='right replyModify'><span class='glyphicon glyphicon-pencil'></span>수정</a> 
 									</div>
@@ -488,8 +495,9 @@
 		
 		
 		
+		
 		//삭제 이벤트
-		document.getElementById('modalDelBtn').onclick =() => {
+		document.getElementById('modalDelBtn').onclick = () => {
 			
 			/*
 			1. 모달창에 rno값, replyPw값을 얻습니다.
@@ -501,16 +509,16 @@
 			삭제가 완료되면 모달 닫고 목록 요청을 다시 보내세요. (reset의 여부를 잘 판단)
 			*/
 			
-			const rno1 = document.getElementById('modalRno').value;
-			const replyPw1 = document.getElementById('modalPw').value;
+			const rno = document.getElementById('modalRno').value;
+			const replyPw = document.getElementById('modalPw').value;
 			
-			/* if(replyPw1 === ''){
-				alert('비밀번호 적어라')
-			} else {
-				alert('')
-			} */
+			 if(replyPw === ''){
+				alert('비밀번호를 확인하세요')
+				return;
+			} 
+
 			
-			const reqObj1 = {
+			/* const reqObj1 = {
 					method: 'delete',
 					headers: {
 						'Content-Type' : 'application/json'
@@ -518,23 +526,86 @@
 					body: JSON.stringify({
 						'replyPw' : replyPw
 					})
-				}
+				} */
 			
 			
-			fetch('${pageContext.request.contextPath}/reply/' + rno, reqObj1)
+			fetch('${pageContext.request.contextPath}/reply/' + rno, {
+				method : 'delete',
+				headers : {
+					'Content-Type' : 'apllication/json'
+				},
+				body : JSON.stringify({
+					'replyPw' : replyPw //'rno' : rno, 'replyPw' : replyPw로 해도됨. 글번호는 뺴도되는데, VO에 넣어서 활용할꺼니 'rno':rno, 라고 써도됨
+				})
+			})
 			.then(res => res.text())
-				.then(data => {
-					if(data === 'zzz'){
-						alert('비밀번호가 틀렸습니다. 확인해 주세요');
-						document.getElementById('modalPw').focus();
+			.then(data => {
+				if(data === 'delSuccess') { //delsuccess는 삭제가 잘 된것
+					alert('댓글이 삭제되었습니다.');
+					document.getElementById('modalPw').value = ''; //삭제를 위해 입력했던 비밀번호가 남아있으니 비워주자
+					$('#replyModal').modal('hide'); //모달을 열고싶으면 show, 닫고싶으면 hide. 이건 정해져있는 라이브러리.
+					//삭제가 반영된 새로운 목록을 불러오자
+					getList(1, true);
 				} else {
-					document.getElementById('modalRno').value = '';
-					$('#replyModal').modal('hide');
-				}
+                        alert('비밀번호가 틀렸습니다.');
+                        document.getElementById('modalPw').value = '';
+                        document.getElementById('modalPw').focus();
+                 }
 			
-			
-			
+			});
+		
+	} //end delete event
+	
+	
+	
+	
+	//댓글 날짜 변한 함수
+	function parseTime(regDateTime){ //이제 넘어오는 배열값을 이용해서 날짜 객체 생성하자.
+		
+		let year, month, day, hour, minute, second;
+		
+		if(regDateTime.length === 5){
+			[year, month, day, hour, minute] = regDateTime;
+			second = 0;
+		} else {
+			[year, month, day, hour, minute, second] = regDateTime;
 		}
+
+		console.log(`${year}, ${month}, ${day}, ${hour}, ${minute}, ${second}`);
+		
+		//원하는 날짜로 객체를 생성
+		const regTime = new Date(year, month-1, day, hour, minute, second); //날짜 객체 생성. 자바스크립트에서 월은 0으로 계산하기 떄문에 -1을 해줘야 한다.
+		const date = new Date();
+		const gap = date.getTime() - regTime.getTime(); //현재시간에서 댓글이 등록된 간격을 구함. (밀리초로 값이 나옴)
+		
+		let time;
+		if(gap < 60 * 60 * 24 * 1000){//그 간격이 하루가 안됨?
+			if(gap < 60 * 60 * 1000){ //그 간격이 1시간이 안됨?
+				time = '방금 전';
+			} else { //하루는 안됐지만 1시간은 됨
+				time = parseInt(gap / (1000 * 60 * 60)) + '시간 전';
+
+			}
+		} else if(gap < 60 * 60 * 24 * 30 * 1000) { //하루가 지났음
+			time = parseInt(gap / (1000 * 60 * 60 * 24)) + '일 전';
+		} else {
+			time = `${regTime.getFullYear()}년 ${regTime.getMonth()-1}월 ${regTIme.getDate()}일`;
+		}
+	   return time;
+	}
+			
+		
+		
+		
+		
+		
+		
+		
+		
+			
+			
+			
+		
 		
 		
 		
@@ -550,7 +621,7 @@
 	} //window.onload 괄호 끝
 </script>
 
-	
+
 
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -89,20 +90,25 @@ public class ReplyController {
 	
 	
 	
-		//	@PostMapping("/delete")
-		//public String delete(int bno) {
-		//service.delete(bno);
-		//return "redirect:/freeboard/freeList";
-		/*
-		 * @PostMapping("reply/{rno}") public String delete(@PathVariable int
-		 * rno, @RequestBody ReplyVO vo) { vo.setRno(rno); service.delete();
-		 * 
-		 * if(service.pwCheck(vo)) { service.delete(); return "zz"; } else { return
-		 * "zzz"; }
-		 * 
-		 * 
-		 * }
-		 */
+
+		
+		  @DeleteMapping("/{rno}")
+		  public String delete(@PathVariable int rno, @RequestBody ReplyVO vo) { 
+			  vo.setRno(rno); 
+			  if(service.pwCheck(vo)) {  //얘가 트루면 비밀번호가 일치하니까. delete해주고 문자열 delSuccess를줌
+				  service.delete(rno);
+				  return "delSuccess";
+			  } else {
+				  return "pwFail";
+			  }
+		}
+				  
+		  
+		
+		  
+		  
+		  
+		 
 	
 	
 	

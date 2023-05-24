@@ -86,6 +86,9 @@ public class ReplyService implements IReplyService {
 		mapper.update(vo); //작성하고  sql쓰러 매퍼로가자
 	}
 
+	
+	
+	
 	@Override
 	public void delete(int rno) {
 		mapper.delete(rno);

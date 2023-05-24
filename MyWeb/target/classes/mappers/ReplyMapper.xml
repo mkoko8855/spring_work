@@ -51,7 +51,7 @@
 	
 	<delete id="delete">
 	DELETE FROM freereply
-		WHERE rno=#{rno}
+		WHERE rno = #{rno}
 	</delete>	
 	
 	

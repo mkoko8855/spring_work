@@ -55,6 +55,8 @@
 	                            	<td>${vo.bno}</td>
 	                            	<td>
 	                            		<a href="${pageContext.request.contextPath}/freeboard/content/${vo.bno}?pageNum=${pc.paging.pageNum}&cpp=${pc.paging.cpp}&keyword=${pc.paging.keyword}&condition=${pc.paging.condition}">${vo.title}</a> <!-- 이렇게 쓰고 프리보드컨트롤러가서 글 상세보기 처리 를 보면 겟맵핑자리를 좀 다르게 적었음 -->
+	                            		&nbsp;
+	                            		<strong>[${vo.replyCnt}]</strong> <!-- 댓글 개수 표시 -->
 	                            	</td>
 	                            	<td>${vo.writer}</td>
 	                            	<td>

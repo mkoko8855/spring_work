@@ -19,7 +19,7 @@ public interface IReplyMapper {
 	
 	
 	//목록 요청(페이징 할거임)
-	List<ReplyVO>getList(Map<String, Object> data); //where절에 번호가 들어감. 파람 말고 맵으로 써보자! > 마이바티스에서는 매개값이 2개이상 이면 파람이던 맵이던 포장을 해야하니 맵을 썼다!
+	List<ReplyVO> getList(Map<String, Object> data); //where절에 번호가 들어감. 파람 말고 맵으로 써보자! > 마이바티스에서는 매개값이 2개이상 이면 파람이던 맵이던 포장을 해야하니 맵을 썼다!
 	
 	
 	

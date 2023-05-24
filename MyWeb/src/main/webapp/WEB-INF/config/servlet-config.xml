@@ -65,4 +65,17 @@
 
 
 
-</beans:beans>
+
+	<!-- 파일 업로드 -->
+	<!-- id를 multipartResolver로 선언. Multipart 형식으로 전달되는 데이터를 스프링 mvc에서 사용할 수 있도록 변환해 주는 객체이다. -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	
+		<!-- 최대 업로드 가능한 바이트 크기(바이트 단위로), 만약에 제한 없이 받고 싶다면 -1을 주면 된다.  -->
+		<beans:property name="maxUploadSize" value="1048576"/> <!-- 1메가바이트로 제한한다(1048576). 이 이상 넘으면 예외를 발생 시키게 된다. -->
+
+		<!-- 업로드 요청을 변환할 때 사용할 문자 인코딩 방식-->
+		<beans:property name="defaultEncoding" value="utf-8"/>
+
+		</beans:bean>
+
+	</beans:beans>

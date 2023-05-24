@@ -54,8 +54,10 @@
 	</insert>
 
 	
-	<select id="getList" resultType="board"> <!-- 여기 board는 mybatis-config에서 설정해줘서 이렇게 적었음. -->
-		SELECT * FROM freeboard
+	<select id="getList" resultType="board"> <!-- 여기 board는 mybatis-config에서 설정해줘서 이렇게 적었음. 그리고 댓글이 몇개 달렸는지 표시를 위해 조인문까지 -->
+		SELECT f.*,
+		(SELECT COUNT(*) FROM freereply WHERE bno = f.bno) AS reply_cnt
+		FROM freeboard f
 		<include refid="search" /> <!-- 이걸하면 메서드를 4개나 만드는 참사를 막을 수 있다. sql을 search라고했으니 그 내용을 여기에 삽입을 하겠다는 것이다!-->
 		ORDER BY bno DESC
 		<!-- 이제 페이징을 위해 리밋을 해줄거다 여기넌 PageVO객체 하나가 전달되고있다.-->

@@ -48,7 +48,7 @@ public class UserController {
 	}
 	
 	
-	
+		
 	
 	//userjoin.jsp 에서 유저컨트롤러로 가자 -> 이제 유저컨트롤러로와서
 
