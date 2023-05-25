@@ -75,7 +75,7 @@ public class UserController {
 		log.info("이메일 인증 요청 들어옴: " + email);
 		
 		//메일센더서비스 클래스에 @Component로 등록해놨으니 
-		mailService.joinEmail(email); //멜서비스야 이메일좀 보내줘.
+		//mailService.joinEmail(email); //멜서비스야 이메일좀 보내줘.
 		
 		
 		

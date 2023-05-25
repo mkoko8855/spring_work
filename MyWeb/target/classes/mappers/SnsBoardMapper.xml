@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    
+    
+    
+<mapper namespace="com.spring.myweb.snsboard.mapper.ISnsBoardMapper">
+
+	<!-- 등록하기 -->
+	
+	<insert id="insert"> <!-- 리턴은없다~ -->
+		INSERT INTO snsboard
+		(writer, upload_path, file_loca, file_name, file_real_name, content) <!--bno는 오토기떄문에, 레그는 자동으로됨  -->
+		VALUES
+		(#{writer}, #{uploadPath}, #{fileLoca}, #{fileName}, #{fileRealName}, #{content}) <!-- vo의변수명적는부분 -->
+	</insert>
+	
+	
+	
+	<select id="getList" resultType="sns"> <!-- 얼리어스를 sns으로했으니~ -->
+		SELECT * FROM snsboard
+		ORDER BY bno DESC
+		LIMIT #{pageStart}, #{cpp}
+	
+	
+	</select>
+
+
+
+
+
+
+	
+
+	
+	
+	
+
+
+</mapper>

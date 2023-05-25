@@ -78,7 +78,7 @@ public class UserService implements IUserService {
 	
 	@Override
 	public void updateUser(UserVO vo) {
-
+		mapper.updateUser(vo);
 	}
 
 }

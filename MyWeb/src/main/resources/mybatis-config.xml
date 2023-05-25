@@ -38,6 +38,7 @@
 			<typeAlias type="com.spring.myweb.command.FreeBoardVO" alias="board"/>
 			<typeAlias type="com.spring.myweb.command.UserVO" alias="user"/>
 			<typeAlias type="com.spring.myweb.command.ReplyVO" alias="reply"/>
+			<typeAlias type="com.spring.myweb.command.SnsBoardVO" alias="sns"/>
 		</typeAliases>
 		<!-- 그럼이제 FreeBoardVO를 지목할 때 마다 이거를 board라고 얘기할 것이다. -->
 	

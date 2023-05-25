@@ -41,6 +41,7 @@
                             <ul class="nav navbar-nav">
                                 <li class="active"><a href="${PageContext.request.contextPath}">Main</a></li>
                                 <li><a href="${pageContext.request.contextPath}/freeboard/freeList">자유게시판</a></li>
+                            	<li><a href="${pageContext.request.contextPath}/snsboard/snsList">SNS</a>
                                 <!-- 
 							<li><a href="#">강의</a></li>
                                 <li><a href="#">Form</a></li>
