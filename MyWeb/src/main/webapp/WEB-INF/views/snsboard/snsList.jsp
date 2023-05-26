@@ -220,11 +220,19 @@
 							<button type="button" class="right btn btn-info" id="uploadBtn">등록하기</button>
 						</div>
 					</div>
-
-
 					<!-- 파일 업로드 폼 끝 -->
+					
+					
+					
+					
+					
 					<div id="contentDiv">
 						<!-- 비동기 방식으로 서버와 통신을 진행 한 후, 목록을 만들어서 붙일 예정. -->
+						
+						
+						
+						
+						
 						
 						
 						
@@ -260,6 +268,12 @@
 		</div>
 	</section>
 	<%@ include file="../include/footer.jsp" %>
+	
+	
+	
+	
+	
+	
 	<!-- 모달 -->
 	<div class="modal fade" id="snsModal" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -291,6 +305,10 @@
 			</div>
 		</div>
 	</div>
+
+
+
+
 
 
 
@@ -451,7 +469,8 @@
 						</div>
 						<div class="title">
 							<p>` + vo.writer + `</p>
-							<small>` + vo.regDate + `</small>
+							<small>` + vo.regDate + `</small> &nbsp;&nbsp;
+							<a id="download" href="${pageContext.request.contextPath}/snsboard/download/` + vo.fileLoca + `/` + vo.fileName + `">이미지 다운로드</a>
 						</div>
 					</div>
 					<div class="content-inner">
@@ -460,8 +479,9 @@
 					</div>
 					<div class="image-inner">
 						<!-- 이미지영역 -->
-						<img src="${pageContext.request.contextPath}/snsboard/display/` + vo.fileLoca + `/` + vo.fileName + `">
-						
+						<a href="` + vo.bno + `"> <!--페이지를 이동시켜줄 것은 아님. 이 링크를 클릭하면 모달을 열어줄 것이다.-->
+						<img data-bno="` + vo.bno + `" src="${pageContext.request.contextPath}/snsboard/display/` + vo.fileLoca + `/` + vo.fileName + `">
+						</a>
 					</div>
 					<div class="like-inner">
 						<!--좋아요-->
@@ -469,8 +489,8 @@
 					</div>
 					<div class="link-inner">
 						<a href="##"><i class="glyphicon glyphicon-thumbs-up"></i>좋아요</a>
-						<a href="`+ vo.bno +`"><i class="glyphicon glyphicon-comment"></i>댓글달기</a> 
-						<a href="`+ vo.bno +`"><i class="glyphicon glyphicon-remove"></i>삭제하기</a>
+						<a data-bno="`+ vo.bno +`"id="comment" href="`+ vo.bno +`"><i class="glyphicon glyphicon-comment"></i>댓글달기</a> 
+						<a id="delBtn" href="`+ vo.bno +`"><i class="glyphicon glyphicon-remove"></i>삭제하기</a>
 					</div>`;
 			}
 			
@@ -486,9 +506,113 @@
 	}	//end getList()
 	
 	
-	
-	
 		
+		
+	
+	
+		//상세보기 처리(모달창 열어줄 것임)
+		//부모요소에다 걸어서 전파하자. 부묘오소는 contentDiv이다.
+		document.getElementById('contentDiv').addEventListener('click', e => { //onclick써도됨
+			e.preventDefault(); //a태그는 기능이 있으니 a태그 기능부터 죽여야한다. 즉, a의 고유 기능 중지
+			console.log('contentDiv 클릭 후 target은누구야? 알려줘 : ' + e.target);
+			
+			
+			if(!e.target.matches('.image-inner img') && !e.target.matches('.link-inner #comment') && !e.target.matches('.title #download')){ //만약 a태그가 아니라면
+				console.log('여기는 이벤트 대상이 아니에요'); 
+				return; //이벤트 종료하겠다.
+			}
+			
+			
+			if(e.target.matches('.title #download')){
+				//이미지나 커멘트는 이걸 건너뜀. 이 로직은 다운로드를 위해서만듦.
+				if(confirm('다운로드를 진행합니다.')){
+					location.href = e.target.getAttribute('href');
+					return; //종료
+				} else {
+					return; //종료
+				}
+			}
+						
+			
+			
+			
+			
+			
+			//a가 아닌 것들은 걸러졌으니, a태그를 클릭했다라고 가정하고.  
+			//글 번호부터 얻자
+			const bno = e.target.dataset.bno;
+			console.log('bno: ' + bno);
+			
+			//글 번호 얻었으니.. 글 번호 묻혀서 요청을 넣어주자
+			//문제 : fetch 함수를 사용하여 글 상세 보기 요청을 비동기 식으로 요청하세요.
+			//전달 받은 글 내용을 미리 준비한 모달창에 뿌릴 겁니다. (모달은 위에 있다)
+			//값을 제 위치에 배치하시고 모달을 열어 달라. (부트스트랩 모달이기 떄문에 JQuery로 열어달라.)
+			// url: /snsboard/content/글번호     메서드이름은 알아서. 컨트롤러도 작성.
+				fetch('${pageContext.request.contextPath}/snsboard/content/' + bno) //get이니까 reqObj 안써도됨.
+				.then(res => res.json())
+				.then(data => {
+					console.log(data); //JSON형태의 data가 왔는지 확인해보기
+					
+					const src = '${pageContext.request.contextPath}/snsboard/display/' + data.fileLoca + '/' + data.fileName;
+					document.getElementById('snsImg').setAttribute('src', src);
+					document.getElementById('snsWriter').textContent = data.writer;
+					document.getElementById('snsRegdate').textContent = data.regDate;
+					document.getElementById('snsContent').textContent = data.content;
+					//뿌렸으면 모달 열기
+				});
+					$('#snsModal').modal('show');
+				});
+
+				
+			
+			
+			
+			
+			
+			
+				
+		//삭제 처리
+		//삭제하기 링크를 클릭했을 떄 이벤트 발생을 시켜서
+		//비동기 방식으로 삭제를 진행해 주세요. (삭제 버튼은 여러개이다.)
+		//다하고, 서버쪽에서 권한을 확인 해 주세요. (작성자와 로그인 중인 사용자의 id를 비교해서 일치하는지의 여부를 판단해주세요)
+		//일치하지 않는다면 문자열 "noAuth" 를 리턴, 삭제 완료하면 "success"를 리턴해주세요.
+		//url은 /snsboard/글번호   method: DELETE
+		//파일도 삭제를 진행해줘야한다. (컨트롤러에 작성해줄것)
+		
+			
+		document.getElementById('contentDiv').addEventListener('click', e=>{
+			e.preventDefault();
+			if(!e.target.matches('.link-inner #delBtn')){
+				return; //종료
+			}
+			
+			const bno = e.target.getAttribute('href'); //글번호얻기
+			
+			fetch('${pageContext.request.contextPath}/snsboard/' + bno, {
+				method : 'delete'
+				//전달할데이터존재는 딱히없으니..reqobj객체안써도됨.
+				
+			})
+			.then(res => res.text())
+			.then(result => {
+				if(result === 'noAuth'){ //noAuth가 온다면~
+					alert('권한이 없습니다.')
+				} else if(result === 'fail'){
+					alert('삭제가 잘 안됐어요. 관리자에게 문의하세요')
+				} else {
+					alert('게시물이 정상적으로 삭제가 되었습니다.');
+					getList(1, true);
+				}
+			});
+		});
+			
+			
+			
+		
+		
+	
+	
+	
 	
 		//무한 스크롤 페이징
 		//모든 게시판에 무한 스크롤 페이징 방식이 어울리는 것은 아니다.

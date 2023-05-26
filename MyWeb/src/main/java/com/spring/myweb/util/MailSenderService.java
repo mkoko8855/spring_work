@@ -54,7 +54,14 @@ public class MailSenderService {
                 "<br>" +
                 "해당 인증 번호를 인증번호 확인란에 기입해 주세요."; //이메일에 삽입할 내용.
 		
-	mailSend(setFrom, toMail, title, content);
+		
+		
+	mailSend(setFrom, toMail, title, content); //난수만 만들어서 리턴해줄꺼야. 이메일이 안갈꺼야. 인증번호는 받게끔.. > 근데 난 주석풀었어.
+		
+		
+		
+		
+		
 	return Integer.toString(authNum); //정수를 문자열로 리턴.
 	
 	}

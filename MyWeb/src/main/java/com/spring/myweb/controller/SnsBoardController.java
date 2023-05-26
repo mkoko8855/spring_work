@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -115,9 +118,81 @@ public class SnsBoardController {
 		
 	}
 	
+		
 	
 	
+		
+		//상세보기 처리
+		@GetMapping("/content/{bno}")
+		public SnsBoardVO getContent(@PathVariable int bno) {
+			return service.getDetail(bno);
+		}
 	
 	
+		
+		
+		//삭제하기
+		@DeleteMapping("/{bno}") 
+		public String delete(@PathVariable int bno, HttpSession session) { 
+			
+			//id꺼내오자
+			String id = (String) session.getAttribute("login");
+			
+			SnsBoardVO vo = service.getDetail(bno);
+			
+			
+			//비교하자
+			if(id == null || !id.equals(vo.getWriter())) { ////로그인을 아예 안한 사람일수도있다. 그럼 위 String id 에 널이올수도있으니 널체크도해야한다.  
+				return "noAuth";
+			} //이 if문을 실행시키지 않았다는 것은 로그인X, 작성자와 로그인 중인 사용자가 일치한다는 뜻이다.
+			
+			//이제 삭제진행
+			service.delete(bno);
+			
+			//글이 삭제되었다면 더 이상 이미지도 존재할 필요가 없으므로
+			//이미지도 함께 지목해서 삭제해주세요. DB삭제하고, 마지막에 글에 달려있던 이미지도 같이 지우자
+			//이미지 지우는 법은
+			File file = new File(vo.getUploadPath()+vo.getFileLoca() + "/" + vo.getFileName()); //"지우고자 하는 파일의 경로를 문자열로."
+			return file.delete() ? "success" : "fail"; // -> 삭제가 성공했다면 true, 실패하면 false. 
+		}
 	
+			
+		@GetMapping("/download/{fileLoca}/{fileName}")
+		public ResponseEntity<byte[]> download(@PathVariable String fileLoca, @PathVariable String fileName){
+			
+			//파일 객체 생성하자
+			File file = new File("C:/test/upload/" + fileLoca + "/" + fileName);
+			
+			ResponseEntity<byte[]> result = null;
+			
+			//헤더파일에 작성을 해주면됨
+			HttpHeaders header = new HttpHeaders();
+			
+			//헤더에 응답하는 본문을 브라우저가 어떻게 표시해야 할 지 알려주는 헤더 정보를 추가한다.
+			//inline인 경우, 웹 페이지 화면에 표시되고 attachment인 경우에는 다운로드를 제공한다.
+			//다운로드를 제공하기 위해, 사용자의 브라우저가 무엇인지 알아야 한다.
+			
+			//request객체의 getHeader("User-Agent") -> 단어를 뽑아서 브라우저 이름을 확인
+	        //ie: Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko  
+	        //chrome: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+
+	        //파일명한글처리(Chrome browser) 크롬
+	        //header.add("Content-Disposition", "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "ISO-8859-1") );
+	        //파일명한글처리(Edge) 엣지 
+	        //header.add("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+	        //파일명한글처리(Trident) IE
+	        //Header.add("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8").replaceAll("\\+", " "));
+			
+			//우린 uuid(영문과 숫자로 이뤄진 랜뎜문자열)로 지정했기에 위에 인코딩 코드 안써도됨
+			
+			header.add("Content-Disposition", "attachment; filename=" + fileName); //화면이 표기가 되어야함. 근데 content-disposition을 안써줘도 기본값으로 헤더에 나감. 아무튼 사용자가 파일을 다운 받는 파일 이름은 우리가 지정한 파일이름으로 나감.
+			
+			try {
+				result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);//객체생성하고
+			} catch (IOException e) {
+				e.printStackTrace();
+				result = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); //500에러에 대한 준비를 화면단에서 하면 됨. 그럼 500에러가 전달될테고 브라우저는 응답 정보가500이 왔으니 에러페이지가 준비됐으니 연결되겠지.
+			} 
+			return result;
+		}
 }

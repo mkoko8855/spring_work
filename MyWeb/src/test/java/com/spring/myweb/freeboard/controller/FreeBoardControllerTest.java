@@ -31,7 +31,6 @@ public class FreeBoardControllerTest {
 	
 	
 	
-	
 	//웹 어플리케이션을 서버에 배포하지 않아도 스프링 MVC 동작을 구현할 수 있는 가상의 구조를 만들어 준다.
 	private MockMvc mockMvc; //가상의, 모조의 MVC다. 화면같은것도 제대로 구축해놓은게 없으니 가상의 mvc구조를 빌려 온 것이다. 
 	
