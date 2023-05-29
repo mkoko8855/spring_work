@@ -27,6 +27,16 @@
                             <button type="button" id="loginBtn" class="btn btn-info btn-block">로그인</button>
                             <button type="button" id="joinBtn" class="btn btn-primary btn-block">회원가입</button>
                          </div>
+                         
+                         
+                         
+                         <!-- 카카오사용할것임, 부트스트랩 사용. 프로퍼티 파일을 하나 파서 카카오디벨로퍼의 내 어플리케이션의 REST API 주소를 kakao.clientId = 공간에 써주러 가자. 보안의 client secret 코드도 넣어주자.  -->
+                         <div class="col-lg-12 text-center mt-3">    <!-- div컬럼을 12개를 채운다는 뜻. mt는 마진3. -->
+                         	<button type="button" onclick="location.href='${urlkakao}'">
+                         		<img alt="카카오 로그인" src="${pageContext.request.contextPath}/img/kakao_login_medium_wide.png">
+                         	</button>
+                         </div>
+                    
                     </form>                
                 </div>
             </div>

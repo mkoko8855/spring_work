@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.spring.myweb.command.KakaoUserVO;
 import com.spring.myweb.command.UserVO;
 import com.spring.myweb.freeboard.service.IFreeBoardService;
 import com.spring.myweb.user.service.IUserService;
+import com.spring.myweb.util.KakaoService;
 import com.spring.myweb.util.MailSenderService;
 import com.spring.myweb.util.PageCreator;
 import com.spring.myweb.util.PageVO;
@@ -37,6 +39,8 @@ public class UserController {
 	@Autowired
 	private MailSenderService mailService; //얘도 주입 받을꺼다.(이메일 전송을 담당하는 변수)
 	
+	@Autowired
+	private KakaoService kakaoService;
 	
 	
 	
@@ -109,11 +113,50 @@ public class UserController {
 	
 	//로그인 페이지로 이동 요청
 	@GetMapping("/userLogin")
-	public void login() { //보이드는 jsp파일은 userlogin.jsp니까
+	public void login(Model model, HttpSession session) { //보이드는 jsp파일은 userlogin.jsp니까
 	
 		//데이터를 날라줄 필요가 없으니..적을건없다. userLogin.jsp로이동하겠지~
+		
+		
+		//카카오 URL을 만들어서 userLogin.jsp로 보내야 한다. 그리고 프로퍼티에 작성한 것을 클래스로 땡겨오자. 카카오로그인서비스를 하나 만들어주자.
+		//그러나 카카오 로그인을 하는 사람이 있으니 카카오 로그민 url을 만들어서 전송해줘야 한다.
+		//login() 에 model이랑 session추가해주자.
+		
+		//카카오서비스 작성해주고, 다시 와서 부르자, 부르려면 객체가 필요하다.
+		String kakaoAuthUrl = kakaoService.getAuthorizationUrl(session);
+		log.info("카카오 로그인 url은 이렇습니다. : {}" , kakaoAuthUrl);
+		model.addAttribute("urlkakao", kakaoAuthUrl); //모델에 담아서 userLogin.jsp로 보낼예정. jsp가서 location.href=공간에 적어주자. ${}는 모델값을 빼낼 떄 사용했었다.
 	}
 	
+	
+	//카카오 로그인 성공 시 callback 되는 요청이다.
+	@GetMapping("/kakao_callback")
+	public void callbackKakao(String code, String state, HttpSession session, Model model) { //4개의 매개값을 준비.
+		
+		log.info("로그인 성공! callbackKakao를 호출했다!");
+		log.info("인가 코드: {}", code);
+		
+		//이제 전송된 코드를 가지고 사용자의 정보를 받을 수 있는 토큰사용.
+		String accessToken = kakaoService.getAccessToken(session, code, state);//서비스에서 작성한 토큰이 왔을것이다~~
+		log.info("access 토큰값: {}", accessToken);
+		
+		//이제 토큰까지 받아냈다. accessToken으로 사용자의 정보를 가져올 수 있다!!
+		//accessToken을 이용해서 로그인 사용자 정보를 읽어 오자.
+		KakaoUserVO vo = kakaoService.getUserProfile(accessToken);
+		
+		//여기까지가 카카오 로그인 api가 제공하는 기능의 끝이다.
+		
+		//로그아웃 같은건 따로 해줘야한다. 로그인 이라는 이름의 세션데이터날리면 된다.
+		//카카오 로그인 했던 사람은 카카오API에 요청을 해줘야 한다. 연결 끊어 달라고.
+		//문서에 나와있다. 오른쪽 목차에 로그아웃을 보고 직접 해보던가 하자! 어드민키는 사용X
+		
+		//그냥 로그아웃이 있고 카카오 계정과 함께 로그아웃이 있다.
+		//기본 로그아웃은 토큰을 만료시켜 해당 사용자 정보로 더 이상 카카오 API를 호출이 불가 한 거고
+		//계정 로그아웃은 반드시 아이디와 비밀번호를 다시 입력해서 들어와야 한다는 것이다. 아예 만료시켜버리는 것이다.
+		
+		//추가 입력 정보가 필요하다면 추가 입력할 수 있는 페이지로 보내셔서 입력을 더 받아서
+		//데이터베이스에 데이터를 집어넣던가 하자.
+	}
 	
 	
 	
@@ -151,6 +194,9 @@ public class UserController {
 		//그럼 UserSurvice클래스에서 getInfo가 불린다!
 		
 	}
+	
+	
+	
 	
 	
 	
